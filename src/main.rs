@@ -4,6 +4,7 @@ use ray::Ray;
 const ASPECT_RATIO: f32 = 16.0/9.0;
 const IMAGE_WIDTH: u16 = 400;
 const IMAGE_HEIGHT: u16 = (IMAGE_WIDTH as f32/ASPECT_RATIO) as u16;
+const SPHERE_RADIUS: f32 = 0.5;
 type Colour = Vec3;
 type Point3 = Vec3;
 
@@ -22,6 +23,7 @@ fn main() {
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin - horizontal/2.0 - vertical/2.0 - Vec3::new(0.0, 0.0, focal_length);
+    let sphere_center = origin - Vec3::new(0.0, 0.0, focal_length);
 
     print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
 
@@ -30,9 +32,19 @@ fn main() {
         for i in 0..IMAGE_WIDTH {
             let u = i as f32 / ((IMAGE_WIDTH - 1) as f32);
             let v = j as f32 / ((IMAGE_HEIGHT - 1) as f32);
-            let r = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
-            let pixel_colour = ray_colour(&r);
-            pixel_colour.print_u8();
+            let ray_endpoint = lower_left_corner + horizontal*u + vertical*v;
+
+            //if the ray endpoint is within the sphere radius then colour it red
+            if (sphere_center - ray_endpoint).length() <= SPHERE_RADIUS {
+                let pixel_colour = Colour::new_i32(1,0,0);
+                pixel_colour.print_u8();
+            }
+            else {
+                let r = Ray::new(origin, ray_endpoint - origin);
+                let pixel_colour = ray_colour(&r);
+                pixel_colour.print_u8();
+            }
+            //pixel_colour.print_u8();
         }
     }
 
