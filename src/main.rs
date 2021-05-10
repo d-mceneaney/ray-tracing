@@ -20,21 +20,24 @@ fn main() {
     let viewport_width = ASPECT_RATIO * viewport_height;
     let focal_length = 1.0;
     let origin = Point3::new_i32(0, 0, 0);
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin - horizontal/2.0 - vertical/2.0 - Vec3::new(0.0, 0.0, focal_length);
-    let sphere_center = origin - Vec3::new(0.0, 0.0, focal_length);
+    let horizontal_vector = Vec3::new(viewport_width, 0.0, 0.0);
+    let vertical_vector = Vec3::new(0.0, viewport_height, 0.0);
+    let focal_vector = Vec3::new(0.0, 0.0, focal_length);
+    let lower_left_corner: Point3 = origin - horizontal_vector/2.0 - vertical_vector/2.0 - focal_vector;
+    let sphere_center: Point3 = origin - Vec3::new(0.0, 0.0, focal_length);
 
     print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
 
     for j in (0..IMAGE_HEIGHT).rev() {
         eprint!("Scanlines remaining: {}\n", j);
         for i in 0..IMAGE_WIDTH {
-            let u = i as f32 / ((IMAGE_WIDTH - 1) as f32);
-            let v = j as f32 / ((IMAGE_HEIGHT - 1) as f32);
-            let ray_endpoint = lower_left_corner + horizontal*u + vertical*v;
+            let u = horizontal_vector * (i as f32 / ((IMAGE_WIDTH - 1) as f32));
+            let v = vertical_vector * (j as f32 / ((IMAGE_HEIGHT - 1) as f32));
+            let ray_endpoint: Point3 = lower_left_corner + u + v;
 
-            //if the ray endpoint is within the sphere radius then colour it red
+            //if the distance between the ray endpoint and the sphere center is less than 
+            //the sphere radius then the ray endpoint must be inside the sphere,
+            //in which case, colour it red
             if (sphere_center - ray_endpoint).length() <= SPHERE_RADIUS {
                 let pixel_colour = Colour::new_i32(1,0,0);
                 pixel_colour.print_u8();
