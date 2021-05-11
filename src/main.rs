@@ -8,26 +8,33 @@ const FOCAL_LENGTH: f32 = -1.0;
 type Colour = Vec3;
 type Point3 = Vec3;
 
-fn hit_sphere(sphere_center: Point3, sphere_radius: f32, ray: &Ray) -> bool {
+fn hit_sphere(sphere_center: Point3, sphere_radius: f32, ray: &Ray) -> f32 {
    let oc: Vec3 = ray.origin() - sphere_center;
    let a = ray.direction().dot(&ray.direction());
    let b = ray.direction().dot(&oc) * 2.0;
    let c = oc.dot(&oc) - (sphere_radius*sphere_radius);
    let discriminant = b*b - 4.0*a*c;
-   discriminant > 0.0
+   
+    match discriminant < 0.0 {
+        true => -1.0,
+        false => (-b -discriminant.sqrt()) / (2.0*a)
+    }
 }
 
 fn ray_colour(ray: &Ray) -> Colour {
     let sphere_center = Point3::new(0.0, 0.0, FOCAL_LENGTH);
     let sphere_radius = 0.5;
 
-    match hit_sphere(sphere_center, sphere_radius, ray) {
-        true => Colour::new_i32(1, 0, 0),
-        false => {
-            let unit_direction  = ray.direction().unit_vec(); 
-            let t = 0.5 * (unit_direction.y() + 1.0);
-            Colour::new_i32(1, 1, 1) * (1.0 - t) + Colour::new(0.5, 0.7, 1.0) * t
-        }
+    let t = hit_sphere(sphere_center, sphere_radius, ray);
+    
+    if t > 0.0 {
+        let n = (ray.at(t) - sphere_center).unit_vec();
+        Colour::new(n.x()+1.0, n.y()+1.0, n.z()+1.0)*0.5
+    }
+    else {
+        let unit_direction  = ray.direction().unit_vec(); 
+        let t = 0.5 * (unit_direction.y() + 1.0);
+        Colour::new_i32(1, 1, 1) * (1.0 - t) + Colour::new(0.5, 0.7, 1.0) * t
     }
 }
 
