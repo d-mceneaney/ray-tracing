@@ -10,14 +10,14 @@ type Point3 = Vec3;
 
 fn hit_sphere(sphere_center: Point3, sphere_radius: f32, ray: &Ray) -> f32 {
    let oc: Vec3 = ray.origin() - sphere_center;
-   let a = ray.direction().dot(&ray.direction());
-   let b = ray.direction().dot(&oc) * 2.0;
-   let c = oc.dot(&oc) - (sphere_radius*sphere_radius);
-   let discriminant = b*b - 4.0*a*c;
+   let a = ray.direction().length_squared();
+   let h = ray.direction().dot(&oc);
+   let c = oc.length_squared() - (sphere_radius*sphere_radius);
+   let discriminant = h*h - a*c;
    
     match discriminant < 0.0 {
         true => -1.0,
-        false => (-b -discriminant.sqrt()) / (2.0*a)
+        false => (-h -discriminant.sqrt()) / a
     }
 }
 
