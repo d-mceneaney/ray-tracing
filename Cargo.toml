@@ -8,4 +8,3 @@ edition = "2018"
 
 [dependencies]
 vec3 = {path = "/home/dme/Documents/workpace/libraries/vec3"}
-ray = {path = "/home/dme/Documents/workpace/libraries/ray"}

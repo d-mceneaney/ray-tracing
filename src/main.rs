@@ -1,6 +1,8 @@
+mod ray;
+mod objects;
 use vec3::Vec3;
 use ray::Ray;
-
+ 
 const ASPECT_RATIO: f32 = 16.0/9.0;
 const IMAGE_WIDTH: u16 = 400;
 const IMAGE_HEIGHT: u16 = (IMAGE_WIDTH as f32/ASPECT_RATIO) as u16;
