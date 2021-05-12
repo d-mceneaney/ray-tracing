@@ -7,7 +7,7 @@ use objects::{Sphere, HitRecord, Hittable};
 const ASPECT_RATIO: f32 = 16.0/9.0;
 const IMAGE_WIDTH: u16 = 400;
 const IMAGE_HEIGHT: u16 = (IMAGE_WIDTH as f32/ASPECT_RATIO) as u16;
-const FOCAL_LENGTH: f32 = -1.0;
+const FOCAL_LENGTH: f32 = 1.0;
 type Colour = Vec3;
 type Point3 = Vec3;
 
@@ -29,17 +29,16 @@ fn ray_colour(ray: &Ray, world: &mut Vec<Box<dyn Hittable>>) -> Colour {
 fn main() {
     //world
     let mut world: Vec<Box<dyn Hittable>> = Vec::new();
-    world.push(Box::new(Sphere::new(Point3::new(0.0, 0.0, FOCAL_LENGTH), 0.5))); 
-    world.push(Box::new(Sphere::new(Point3::new(0.0, -100.5, FOCAL_LENGTH), 100.0))); 
+    world.push(Box::new(Sphere::new(Point3::new(0.0, 0.0, -FOCAL_LENGTH), 0.5))); 
+    world.push(Box::new(Sphere::new(Point3::new(0.0, -100.5, -FOCAL_LENGTH), 100.0))); 
     
     //Camera
     let viewport_height = 2.0;
     let viewport_width = ASPECT_RATIO * viewport_height;
-    let focal_length = 1.0;
     let origin = Point3::new_i32(0, 0, 0);
     let horizontal_vector = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical_vector = Vec3::new(0.0, viewport_height, 0.0);
-    let focal_vector = Vec3::new(0.0, 0.0, focal_length);
+    let focal_vector = Vec3::new(0.0, 0.0, FOCAL_LENGTH);
     let lower_left_corner: Point3 = origin - horizontal_vector/2.0 - vertical_vector/2.0 - focal_vector;
 
     //render
