@@ -5,12 +5,21 @@ type Point3 = Vec3;
 
 pub struct HitRecord {
     p: Point3,
-    normal: Vec3,
+    pub normal: Vec3,
     t: f32,
     front_face: bool
 }
 
 impl HitRecord {
+    pub fn new() -> Self {
+        Self {
+            p: Point3::new_i32(0,0,0),
+            normal: Vec3::new_i32(0, 0, 0),
+            t: 0.0,
+            front_face: false
+        }
+    }
+
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3) {
        self.front_face = ray.direction().dot(&outward_normal) < 0.0; 
         self.normal = match self.front_face {

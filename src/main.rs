@@ -2,7 +2,7 @@ mod ray;
 mod objects;
 use vec3::Vec3;
 use ray::Ray;
-use objects::{Sphere, Hittable};
+use objects::{Sphere, HitRecord, Hittable};
  
 const ASPECT_RATIO: f32 = 16.0/9.0;
 const IMAGE_WIDTH: u16 = 400;
@@ -11,38 +11,28 @@ const FOCAL_LENGTH: f32 = -1.0;
 type Colour = Vec3;
 type Point3 = Vec3;
 
-fn hit_sphere(sphere_center: Point3, sphere_radius: f32, ray: &Ray) -> f32 {
-   let oc: Vec3 = ray.origin() - sphere_center;
-   let a = ray.direction().length_squared();
-   let h = ray.direction().dot(&oc);
-   let c = oc.length_squared() - (sphere_radius*sphere_radius);
-   let discriminant = h*h - a*c;
-   
-    match discriminant < 0.0 {
-        true => -1.0,
-        false => (-h -discriminant.sqrt()) / a
+fn ray_colour(ray: &Ray, world: &mut Vec<Box<dyn Hittable>>) -> Colour {
+    let mut record = HitRecord::new();
+
+    for object in world {
+        if object.hit(ray, 0.0, f32::INFINITY, &mut record)
+        {
+            return ((Colour::new_i32(1, 1, 1) + record.normal)) * 0.5;
+        }
     }
-}
-
-fn ray_colour(ray: &Ray) -> Colour {
-    let sphere_center = Point3::new(0.0, 0.0, FOCAL_LENGTH);
-    let sphere_radius = 0.5;
-
-    let t = hit_sphere(sphere_center, sphere_radius, ray);
+    let unit_direction = ray.direction().unit_vec();
+    let t = (unit_direction.y() + 1.0) * 0.5;
     
-    if t > 0.0 {
-        let n = (ray.at(t) - sphere_center).unit_vec();
-        Colour::new(n.x()+1.0, n.y()+1.0, n.z()+1.0)*0.5
-    }
-    else {
-        let unit_direction  = ray.direction().unit_vec(); 
-        let t = 0.5 * (unit_direction.y() + 1.0);
-        Colour::new_i32(1, 1, 1) * (1.0 - t) + Colour::new(0.5, 0.7, 1.0) * t
-    }
+    return Colour::new_i32(1,1,1) * (1.0-t) + Colour::new(0.5, 0.7, 1.0) * t;
 }
 
 fn main() {
-//Camera
+    //world
+    let mut world: Vec<Box<dyn Hittable>> = Vec::new();
+    world.push(Box::new(Sphere::new(Point3::new(0.0, 0.0, FOCAL_LENGTH), 0.5))); 
+    world.push(Box::new(Sphere::new(Point3::new(0.0, -100.5, FOCAL_LENGTH), 100.0))); 
+    
+    //Camera
     let viewport_height = 2.0;
     let viewport_width = ASPECT_RATIO * viewport_height;
     let focal_length = 1.0;
@@ -52,8 +42,8 @@ fn main() {
     let focal_vector = Vec3::new(0.0, 0.0, focal_length);
     let lower_left_corner: Point3 = origin - horizontal_vector/2.0 - vertical_vector/2.0 - focal_vector;
 
+    //render
     print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
-
     for j in (0..IMAGE_HEIGHT).rev() {
         eprint!("Scanlines remaining: {}\n", j);
         for i in 0..IMAGE_WIDTH {
@@ -61,7 +51,7 @@ fn main() {
             let v = vertical_vector * (j as f32 / ((IMAGE_HEIGHT - 1) as f32));
             let ray_endpoint: Point3 = lower_left_corner + u + v;
             let ray = Ray::new(origin, ray_endpoint - origin);
-            let pixel_colour = ray_colour(&ray);
+            let pixel_colour = ray_colour(&ray, &mut world);
             pixel_colour.print_u8();
         }
     }
