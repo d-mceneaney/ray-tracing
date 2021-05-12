@@ -2,6 +2,7 @@ mod ray;
 mod objects;
 use vec3::Vec3;
 use ray::Ray;
+use objects::{Sphere, Hittable};
  
 const ASPECT_RATIO: f32 = 16.0/9.0;
 const IMAGE_WIDTH: u16 = 400;
