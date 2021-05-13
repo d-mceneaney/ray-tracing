@@ -1,5 +1,5 @@
 //!A Ray struct for use in ray-tracing
-use vec3::Vec3;
+use crate::vec3::Vec3;
 
 type Point3 = Vec3;
 
