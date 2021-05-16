@@ -1,4 +1,5 @@
 use crate::vec3::Vec3;
+use rand::Rng;
 
 type Colour = Vec3;
 
@@ -19,4 +20,25 @@ pub fn write_color(pixel_colour: Colour, samples_per_pixel: u8) {
         (256.0 * green.clamp(0.0, 0.999)) as u8,
         (256.0 * blue.clamp(0.0, 0.999)) as u8
     )
+}
+
+pub fn random_vec3(min: f32, max: f32) -> Vec3 {
+    let mut rng = rand::thread_rng();
+    Vec3::new(
+        rng.gen_range(min..max),
+        rng.gen_range(min..max),
+        rng.gen_range(min..max),
+    )
+}
+
+pub fn random_vec3_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = random_vec3(-1.0, 1.0);
+
+        if p.length_squared() >= 1.0 {
+            continue;
+        } else {
+            return  p;
+        }
+    }
 }
