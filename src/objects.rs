@@ -96,7 +96,7 @@ impl HittableList {
     }
 
     pub fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, record: &mut HitRecord) -> bool {
-        let mut temp_record = record.clone();
+        let mut temp_record = HitRecord::new();
         let mut hit_anything = false;
         let mut closest_so_far = t_max;
 
@@ -104,7 +104,7 @@ impl HittableList {
             if object.hit(ray, t_min, closest_so_far, &mut temp_record) {
                 hit_anything = true;
                 closest_so_far = temp_record.t;
-                *record = temp_record.clone();
+                *record = temp_record;
             }
         }
 
