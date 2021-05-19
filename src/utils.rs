@@ -10,9 +10,9 @@ pub fn write_color(pixel_colour: Colour, samples_per_pixel: u8) {
 
     //divide the colour by the number of samples
     let scale = 1.0 / samples_per_pixel as f32;
-    red = red * scale;
-    green = green * scale;
-    blue = blue * scale;
+    red = (red * scale).sqrt();
+    green = (green * scale).sqrt();
+    blue = (blue * scale).sqrt();
 
     println!(
         "{} {} {}",

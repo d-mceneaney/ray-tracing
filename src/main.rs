@@ -14,7 +14,7 @@ const IMAGE_WIDTH: u16 = 400;
 const IMAGE_HEIGHT: u16 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u16;
 const FOCAL_LENGTH: f32 = 1.0;
 const SAMPLES_PER_PIXEL: u8 = 100;
-const MAX_DEPTH: u8 = 50;
+const MAX_DEPTH: u8 = 10;
 type Colour = Vec3;
 type Point3 = Vec3;
 
