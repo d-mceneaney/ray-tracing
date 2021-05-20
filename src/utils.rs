@@ -42,3 +42,7 @@ pub fn random_vec3_in_unit_sphere() -> Vec3 {
         }
     }
 }
+
+pub fn random_unit_vector() -> Vec3 {
+    random_vec3_in_unit_sphere().unit_vec()
+}

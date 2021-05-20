@@ -5,7 +5,7 @@ mod utils;
 mod vec3;
 use objects::{HitRecord, Sphere, HittableList};
 use ray::Ray;
-use utils::{write_color, random_vec3_in_unit_sphere};
+use utils::{write_color, random_unit_vector};
 use vec3::Vec3;
 use rand::Rng;
 
@@ -26,7 +26,7 @@ fn ray_colour(ray: &Ray, world: &HittableList, depth: u8) -> Colour {
     let mut record = HitRecord::new();
 
         if world.hit(ray, 0.001, f32::INFINITY, &mut record) {
-            let target: Point3 = record.p + record.normal + random_vec3_in_unit_sphere();
+            let target: Point3 = record.p + record.normal + random_unit_vector();
             return ray_colour(&Ray::new(record.p, target - record.p), &world, depth - 1) * 0.5;
     }
     let unit_direction = ray.direction().unit_vec();
