@@ -46,3 +46,12 @@ pub fn random_vec3_in_unit_sphere() -> Vec3 {
 pub fn random_unit_vector() -> Vec3 {
     random_vec3_in_unit_sphere().unit_vec()
 }
+
+pub fn random_vec3_in_hemisphere(normal: &Vec3) -> Vec3 {
+    let in_unit_sphere = random_vec3_in_unit_sphere();
+
+    match in_unit_sphere.dot(normal) > 0.0 {
+        true => in_unit_sphere,
+        false => -in_unit_sphere
+    }
+}
